@@ -1,0 +1,31 @@
+{
+	"name": "tdoo_api_node",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "tsc -p tsconfig.json",
+		"dev": "tsx watch --clear-screen=false src/index.ts",
+		"start": "node index.js",
+		"db:pull": "prisma db pull",
+		"db:generate": "prisma generate",
+		"db:migrate": "prisma migrate dev"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@fastify/env": "^4.3.0",
+		"@fastify/one-line-logger": "^1.2.0",
+		"@prisma/client": "^5.6.0",
+		"fastify": "^4.24.3"
+	},
+	"devDependencies": {
+		"@tsconfig/node20": "^20.1.2",
+		"@types/node": "^20.10.3",
+		"prisma": "^5.6.0",
+		"tsx": "^4.6.2",
+		"typescript": "^5.3.2"
+	}
+}
