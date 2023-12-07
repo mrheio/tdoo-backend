@@ -1,0 +1,5 @@
+GET {{api_url}}/users
+###
+
+GET {{api_url}}/users/1
+###

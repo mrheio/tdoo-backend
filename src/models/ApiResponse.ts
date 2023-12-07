@@ -6,4 +6,12 @@ export default class ApiResponse<T> {
 		this.type = type;
 		this.data = data;
 	}
+
+	static success<T>(data: T) {
+		return new ApiResponse('success', data);
+	}
+
+	static error<T>(data: T) {
+		return new ApiResponse('error', data);
+	}
 }

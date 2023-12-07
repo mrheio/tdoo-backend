@@ -1,46 +1,61 @@
-import { RouteHandlerMethod } from 'fastify';
-import prisma from '../db';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import ApiResponse from '../models/ApiResponse';
+import userService from '../services/userService';
 
-const createUser: RouteHandlerMethod = async (request, reply) => {
-	const data = request.body;
-	await prisma.user.create(data);
-	return new ApiResponse('success', data);
+const createUser = async (request: FastifyRequest, reply: FastifyReply) => {
+	const { body } = request;
+
+	const data = await userService.createUser(body);
+
+	return reply.send(ApiResponse.success(data));
 };
 
-const getUsers: RouteHandlerMethod = async (request, reply) => {
-	const data = await prisma.user.findMany();
-	return new ApiResponse('success', data);
-};
-
-const getUserById: RouteHandlerMethod = async (request, reply) => {
+const updateUser = async (
+	request: FastifyRequest<{ Params: { id: string } }>,
+	reply: FastifyReply,
+) => {
+	const { body } = request;
 	const { id } = request.params;
-	const data = await prisma.user.findUnique({ where: { id } });
-	return new ApiResponse('success', data);
+
+	const data = await userService.updateUser(id, body);
+
+	return reply.send(ApiResponse.success(data));
 };
 
-const updateUser: RouteHandlerMethod = async (request, reply) => {
+const deleteUser = async (
+	request: FastifyRequest<{ Params: { id: string } }>,
+	reply: FastifyReply,
+) => {
 	const { id } = request.params;
-	const newData = request.body;
-	const data = await prisma.user.update({
-		where: { id },
-		data: newData,
-	});
-	return new ApiResponse('success', data);
+
+	const data = await userService.deleteUser(id);
+
+	return reply.send(ApiResponse.success(data));
 };
 
-const deleteUser: RouteHandlerMethod = async (request, reply) => {
+const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
+	const data = await userService.getMany();
+
+	return reply.send(ApiResponse.success(data));
+};
+
+const getUserById = async (
+	request: FastifyRequest<{ Params: { id: string } }>,
+	reply: FastifyReply,
+) => {
 	const { id } = request.params;
-	await prisma.user.delete({ where: { id } });
-	return new ApiResponse('success', {});
+
+	const data = await userService.getOneById(id);
+
+	return reply.send(ApiResponse.success(data));
 };
 
 const userController = {
 	createUser,
-	getUsers,
-	getUserById,
 	updateUser,
 	deleteUser,
+	getUsers,
+	getUserById,
 };
 
 export default userController;

@@ -1,4 +1,0 @@
-@root=http://localhost:8080/api
-
-GET {{root}}/users
-###

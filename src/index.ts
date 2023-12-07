@@ -34,7 +34,7 @@ const apiHandler: FastifyPluginCallback = (fastify, _, done) => {
 	done();
 };
 
-const setup = async () => {
+(async () => {
 	await server.register(fastifyEnv, envOptions);
 
 	server.register(apiHandler, { prefix: '/api' });
@@ -50,6 +50,4 @@ const setup = async () => {
 			console.log(`Server listening at ${address}`);
 		},
 	);
-};
-
-setup();
+})();
