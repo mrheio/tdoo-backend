@@ -1,0 +1,26 @@
+POST {{api_url}}/users
+content-type: application/json
+
+{
+    "email": "email1@test.com",
+    "username": "user1"
+}
+###
+
+PUT {{api_url}}/users/f59bde4d-1925-46a5-8f8c-bf3efa692366
+content-type: application/json
+
+{
+    "email": "",
+    "username": "user2"
+}
+###
+
+DELETE {{api_url}}/users/4c4fc6ce-78d3-4983-a06b-6ff868944409
+###
+
+GET {{api_url}}/users
+###
+
+GET {{api_url}}/users/53091e0d-c0c1-4c37-b103-28248e7a69cb
+###

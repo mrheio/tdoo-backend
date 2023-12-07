@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import ApiResponse from '../models/ApiResponse';
+import HttpStatusCode from '../http';
+import ApiSuccess from '../models/ApiSuccess';
 import userService from '../services/userService';
 
 const createUser = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -7,7 +8,7 @@ const createUser = async (request: FastifyRequest, reply: FastifyReply) => {
 
 	const data = await userService.createUser(body);
 
-	return reply.send(ApiResponse.success(data));
+	return reply.send(ApiSuccess.created(data));
 };
 
 const updateUser = async (
@@ -19,7 +20,7 @@ const updateUser = async (
 
 	const data = await userService.updateUser(id, body);
 
-	return reply.send(ApiResponse.success(data));
+	return reply.send(ApiSuccess.ok(data));
 };
 
 const deleteUser = async (
@@ -30,13 +31,13 @@ const deleteUser = async (
 
 	const data = await userService.deleteUser(id);
 
-	return reply.send(ApiResponse.success(data));
+	return reply.code(HttpStatusCode.NO_CONTENT).send();
 };
 
 const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
 	const data = await userService.getMany();
 
-	return reply.send(ApiResponse.success(data));
+	return reply.send(ApiSuccess.ok(data));
 };
 
 const getUserById = async (
@@ -47,7 +48,7 @@ const getUserById = async (
 
 	const data = await userService.getOneById(id);
 
-	return reply.send(ApiResponse.success(data));
+	return reply.send(ApiSuccess.ok(data));
 };
 
 const userController = {

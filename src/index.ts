@@ -1,6 +1,7 @@
 import { FastifyEnvOptions, fastifyEnv } from '@fastify/env';
 import fastify, { FastifyPluginCallback } from 'fastify';
 import { PinoLoggerOptions } from 'fastify/types/logger';
+import errorHandler from './error';
 import userRouter from './routers/userRouter';
 
 const loggerOptions: PinoLoggerOptions = {
@@ -38,6 +39,8 @@ const apiHandler: FastifyPluginCallback = (fastify, _, done) => {
 	await server.register(fastifyEnv, envOptions);
 
 	server.register(apiHandler, { prefix: '/api' });
+
+	server.setErrorHandler(errorHandler);
 
 	server.listen(
 		{ host: process.env.HOST, port: process.env.PORT },
