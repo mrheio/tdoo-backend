@@ -1,3 +1,4 @@
+import { FastifyReply } from 'fastify';
 import HttpStatusCode from '../http';
 
 export default class ApiSuccess<T> {
@@ -20,5 +21,9 @@ export default class ApiSuccess<T> {
 
 	static noContent<T>() {
 		return new ApiSuccess(HttpStatusCode.NO_CONTENT);
+	}
+
+	send(reply: FastifyReply) {
+		return reply.code(this.statusCode).send(this);
 	}
 }

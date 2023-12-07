@@ -1,4 +1,6 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { FastifyReply } from 'fastify';
+import { ZodError } from 'zod';
 import HttpStatusCode from '../http';
 
 export default class ApiError<T> extends Error {
@@ -10,6 +12,19 @@ export default class ApiError<T> extends Error {
 		super(message);
 		this.statusCode = statusCode;
 		this.details = details;
+	}
+
+	toJson() {
+		return {
+			type: this.type,
+			statusCode: this.statusCode,
+			message: this.message,
+			details: this.details,
+		};
+	}
+
+	send(reply: FastifyReply) {
+		return reply.code(this.statusCode).send(this.toJson());
 	}
 
 	static badRequest<T>(message: string, details?: T) {
@@ -42,6 +57,11 @@ export default class ApiError<T> extends Error {
 		},
 	};
 
+	static validation = {
+		user: <T>(zError: ZodError<T>) =>
+			ApiError.badRequest('Invalid user data', zError.flatten()),
+	};
+
 	static maybeFromPrisma(error: unknown, resource: 'user' = 'user') {
 		if (error instanceof PrismaClientKnownRequestError) {
 			if (error.code === 'P2025') {
@@ -65,14 +85,5 @@ export default class ApiError<T> extends Error {
 		}
 
 		return error;
-	}
-
-	toJson() {
-		return {
-			type: this.type,
-			statusCode: this.statusCode,
-			message: this.message,
-			details: this.details,
-		};
 	}
 }

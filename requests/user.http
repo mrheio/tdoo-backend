@@ -2,8 +2,8 @@ POST {{api_url}}/users
 content-type: application/json
 
 {
-    "email": "email1@test.com",
-    "username": "user1"
+    "email": "email4@test.com",
+    "username": "user4"
 }
 ###
 

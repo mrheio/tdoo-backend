@@ -7,7 +7,7 @@ const errorHandler = (
 	reply: FastifyReply,
 ) => {
 	if (error instanceof ApiError) {
-		return reply.code(error.statusCode).send(error.toJson());
+		return error.send(reply);
 	}
 
 	throw error;

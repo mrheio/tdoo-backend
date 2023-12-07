@@ -3,14 +3,14 @@ import ApiError from '../models/ApiError';
 import userSchemas from '../schemas/userSchemas';
 
 const createUser = async (payload: unknown) => {
-	const valid = userSchemas.createUser.safeParse(payload);
+	const validation = userSchemas.createUser.safeParse(payload);
 
-	if (!valid.success) {
-		throw ApiError.badRequest('Invalid user data', valid.error.flatten());
+	if (!validation.success) {
+		throw ApiError.validation.user(validation.error);
 	}
 
 	try {
-		const res = await prisma.user.create({ data: valid.data });
+		const res = await prisma.user.create({ data: validation.data });
 		return res;
 	} catch (err) {
 		throw ApiError.maybeFromPrisma(err);
@@ -18,16 +18,16 @@ const createUser = async (payload: unknown) => {
 };
 
 const updateUser = async (id: string, payload: unknown) => {
-	const valid = userSchemas.updateUser.safeParse(payload);
+	const validation = userSchemas.updateUser.safeParse(payload);
 
-	if (!valid.success) {
-		throw ApiError.badRequest('Invalid user data', valid.error.flatten());
+	if (!validation.success) {
+		throw ApiError.validation.user(validation.error);
 	}
 
 	try {
 		const res = await prisma.user.update({
 			where: { id },
-			data: valid.data,
+			data: validation.data,
 		});
 		return res;
 	} catch (err) {

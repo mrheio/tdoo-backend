@@ -8,7 +8,7 @@ const createUser = async (request: FastifyRequest, reply: FastifyReply) => {
 
 	const data = await userService.createUser(body);
 
-	return reply.send(ApiSuccess.created(data));
+	return ApiSuccess.created(data).send(reply);
 };
 
 const updateUser = async (
@@ -20,7 +20,7 @@ const updateUser = async (
 
 	const data = await userService.updateUser(id, body);
 
-	return reply.send(ApiSuccess.ok(data));
+	return ApiSuccess.ok(data).send(reply);
 };
 
 const deleteUser = async (
@@ -37,7 +37,7 @@ const deleteUser = async (
 const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
 	const data = await userService.getMany();
 
-	return reply.send(ApiSuccess.ok(data));
+	return ApiSuccess.ok(data).send(reply);
 };
 
 const getUserById = async (
@@ -48,7 +48,7 @@ const getUserById = async (
 
 	const data = await userService.getOneById(id);
 
-	return reply.send(ApiSuccess.ok(data));
+	return ApiSuccess.ok(data).send(reply);
 };
 
 const userController = {
