@@ -1,17 +1,8 @@
 import { FastifyEnvOptions, fastifyEnv } from '@fastify/env';
 import fastify, { FastifyPluginCallback } from 'fastify';
-import { PinoLoggerOptions } from 'fastify/types/logger';
 import errorHandler from './error';
 import userRouter from './routers/userRouter';
-
-const loggerOptions: PinoLoggerOptions = {
-	transport: {
-		target: '@fastify/one-line-logger',
-		options: {
-			colorize: true,
-		},
-	},
-};
+import { zodValidatorCompiler } from './schemas/utils';
 
 const envOptions: FastifyEnvOptions = {
 	dotenv: true,
@@ -26,7 +17,14 @@ const envOptions: FastifyEnvOptions = {
 };
 
 const server = fastify({
-	logger: loggerOptions,
+	logger: {
+		transport: {
+			target: '@fastify/one-line-logger',
+			options: {
+				colorize: true,
+			},
+		},
+	},
 });
 
 const apiHandler: FastifyPluginCallback = (fastify, _, done) => {
@@ -37,9 +35,8 @@ const apiHandler: FastifyPluginCallback = (fastify, _, done) => {
 
 (async () => {
 	await server.register(fastifyEnv, envOptions);
-
+	server.setValidatorCompiler(zodValidatorCompiler);
 	server.register(apiHandler, { prefix: '/api' });
-
 	server.setErrorHandler(errorHandler);
 
 	server.listen(

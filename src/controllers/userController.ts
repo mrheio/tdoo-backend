@@ -35,7 +35,13 @@ const deleteUser = async (
 };
 
 const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
-	const data = await userService.getMany();
+	request.validateInput(request.query, 'querystring');
+	const { query } = request;
+
+	const data = await userService.getMany({
+		...query,
+		orderBy: { [query.order_by]: query.order_dir },
+	});
 
 	return ApiSuccess.ok(data).send(reply);
 };

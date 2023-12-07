@@ -44,8 +44,18 @@ const deleteUser = async (id: string) => {
 	}
 };
 
-const getMany = async () => {
-	const data = await prisma.user.findMany();
+const getMany = async (params?: {
+	email: string;
+	username: string;
+	orderBy: object;
+}) => {
+	const { email, username, orderBy } = params;
+
+	const data = await prisma.user.findMany({
+		orderBy,
+		where: { email: { contains: email }, username: { contains: username } },
+	});
+
 	return data;
 };
 
