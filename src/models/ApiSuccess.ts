@@ -24,6 +24,9 @@ export default class ApiSuccess<T> {
 	}
 
 	send(reply: FastifyReply) {
+		if (this.statusCode === HttpStatusCode.NO_CONTENT) {
+			return reply.code(this.statusCode).send();
+		}
 		return reply.code(this.statusCode).send(this);
 	}
 }

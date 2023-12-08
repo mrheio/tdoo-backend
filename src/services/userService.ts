@@ -1,6 +1,7 @@
 import prisma from '../db';
 import ApiError from '../models/ApiError';
 import userSchemas from '../schemas/userSchemas';
+import { GetUsersFilters } from '../types';
 
 const createUser = async (payload: unknown) => {
 	const validation = userSchemas.createUser.safeParse(payload);
@@ -44,16 +45,13 @@ const deleteUser = async (id: string) => {
 	}
 };
 
-const getMany = async (params?: {
-	email: string;
-	username: string;
-	orderBy: object;
-}) => {
-	const { email, username, orderBy } = params;
-
+const getMany = async (filters?: GetUsersFilters) => {
 	const data = await prisma.user.findMany({
-		orderBy,
-		where: { email: { contains: email }, username: { contains: username } },
+		orderBy: filters?.orderBy,
+		where: {
+			email: { contains: filters?.email },
+			username: { contains: filters?.username },
+		},
 	});
 
 	return data;

@@ -1,7 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import HttpStatusCode from '../http';
 import ApiSuccess from '../models/ApiSuccess';
 import userService from '../services/userService';
+import { GetUsersFilters, GetUsersQueryParams } from '../types';
 
 const createUser = async (request: FastifyRequest, reply: FastifyReply) => {
 	const { body } = request;
@@ -31,17 +31,21 @@ const deleteUser = async (
 
 	const data = await userService.deleteUser(id);
 
-	return reply.code(HttpStatusCode.NO_CONTENT).send();
+	return ApiSuccess.noContent().send(reply);
 };
 
-const getUsers = async (request: FastifyRequest, reply: FastifyReply) => {
-	request.validateInput(request.query, 'querystring');
+const getUsers = async (
+	request: FastifyRequest<{ Querystring: GetUsersQueryParams }>,
+	reply: FastifyReply,
+) => {
 	const { query } = request;
+	const { order_by, order_dir, ...rest } = query;
+	const filters: GetUsersFilters = {
+		...rest,
+		...(order_by && { orderBy: { [order_by]: order_dir } }),
+	};
 
-	const data = await userService.getMany({
-		...query,
-		orderBy: { [query.order_by]: query.order_dir },
-	});
+	const data = await userService.getMany(filters);
 
 	return ApiSuccess.ok(data).send(reply);
 };
