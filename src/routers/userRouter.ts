@@ -1,6 +1,6 @@
 import { FastifyPluginCallback } from 'fastify';
 import userController from '../controllers/userController';
-import userSchemas from '../schemas/userSchemas';
+import querySchemas from '../schemas/querySchemas';
 
 const userRouter: FastifyPluginCallback = (fastify, opts, done) => {
 	fastify.post('/', userController.createUser);
@@ -10,7 +10,7 @@ const userRouter: FastifyPluginCallback = (fastify, opts, done) => {
 	fastify.route({
 		url: '/',
 		method: 'GET',
-		schema: { querystring: userSchemas.getUsersQuery },
+		schema: { querystring: querySchemas.getUsersQuery },
 		handler: userController.getUsers,
 	});
 
