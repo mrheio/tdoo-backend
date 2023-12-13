@@ -16,7 +16,7 @@ content-type: application/json
 }
 ###
 
-DELETE {{api_url}}/users/4c4fc6ce-78d3-4983-a06b-6ff868944409
+DELETE {{api_url}}/users/73deb29a-0ea3-49f7-ab4b-36363f138954
 ###
 
 GET {{api_url}}/users

@@ -2,6 +2,7 @@ import { FastifyEnvOptions, fastifyEnv } from '@fastify/env';
 import fastify, { FastifyPluginCallback } from 'fastify';
 import errorHandler from './error';
 import authRouter from './routers/authRouter';
+import todoRouter from './routers/todoRouter';
 import userRouter from './routers/userRouter';
 import { zodValidatorCompiler } from './schemas/utils';
 
@@ -31,6 +32,7 @@ const server = fastify({
 const apiHandler: FastifyPluginCallback = (fastify, _, done) => {
 	fastify.register(authRouter, { prefix: '/auth' });
 	fastify.register(userRouter, { prefix: '/users' });
+	fastify.register(todoRouter, { prefix: '/todos' });
 
 	done();
 };

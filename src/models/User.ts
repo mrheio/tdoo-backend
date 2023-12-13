@@ -1,3 +1,4 @@
+import userSchemas from '../schemas/userSchemas';
 import Todo from './Todo';
 
 export default class User {
@@ -20,4 +21,9 @@ export default class User {
 		this.created_at = created_at;
 		this.todos = todos;
 	}
+
+	static validate = {
+		create: (data: unknown) => userSchemas.createUser.safeParse(data),
+		update: (data: unknown) => userSchemas.updateUser.safeParse(data),
+	};
 }

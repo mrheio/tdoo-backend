@@ -1,34 +1,21 @@
 import prisma from '../db';
 import ApiError from '../models/ApiError';
-import userSchemas from '../schemas/userSchemas';
-import { GetUsersFilters } from '../types';
+import { CreateUserData, GetUsersFilters, UpdateUserData } from '../types';
 
-const createUser = async (payload: unknown) => {
-	const validation = userSchemas.createUser.safeParse(payload);
-
-	if (!validation.success) {
-		throw ApiError.validation.user(validation.error);
-	}
-
+const createUser = async (payload: CreateUserData) => {
 	try {
-		const res = await prisma.user.create({ data: validation.data });
+		const res = await prisma.user.create({ data: payload });
 		return res;
 	} catch (err) {
 		throw ApiError.maybeFromPrisma(err);
 	}
 };
 
-const updateUser = async (id: string, payload: unknown) => {
-	const validation = userSchemas.updateUser.safeParse(payload);
-
-	if (!validation.success) {
-		throw ApiError.validation.user(validation.error);
-	}
-
+const updateUser = async (id: string, payload: UpdateUserData) => {
 	try {
 		const res = await prisma.user.update({
 			where: { id },
-			data: validation.data,
+			data: payload,
 		});
 		return res;
 	} catch (err) {
@@ -41,6 +28,8 @@ const deleteUser = async (id: string) => {
 		const res = await prisma.user.delete({ where: { id } });
 		return res;
 	} catch (err) {
+		console.log(err);
+
 		throw ApiError.maybeFromPrisma(err);
 	}
 };

@@ -1,19 +1,30 @@
 import { FastifyPluginCallback } from 'fastify';
 import userController from '../controllers/userController';
 import querySchemas from '../schemas/querySchemas';
+import userSchemas from '../schemas/userSchemas';
+
+const schemas = {
+	userCreate: { body: userSchemas.createUser },
+	userUpdate: { body: userSchemas.updateUser },
+	getMany: { querystring: querySchemas.getUsersQuery },
+};
 
 const userRouter: FastifyPluginCallback = (fastify, opts, done) => {
-	fastify.post('/', userController.createUser);
-	fastify.put('/:id', userController.updateUser);
+	fastify.post(
+		'/',
+		{ schema: schemas.userCreate },
+		userController.createUser,
+	);
+
+	fastify.put(
+		'/:id',
+		{ schema: schemas.userUpdate },
+		userController.updateUser,
+	);
+
 	fastify.delete('/:id', userController.deleteUser);
 
-	fastify.route({
-		url: '/',
-		method: 'GET',
-		schema: { querystring: querySchemas.getUsersQuery },
-		handler: userController.getUsers,
-	});
-
+	fastify.get('/', { schema: schemas.getMany }, userController.getUsers);
 	fastify.get('/:id', userController.getUserById);
 
 	done();

@@ -38,6 +38,12 @@ export default class ApiError<T> extends Error {
 				'User not found',
 				details,
 			),
+		todo: <T>(details?: T) =>
+			new ApiError<T>(
+				HttpStatusCode.NOT_FOUND,
+				'Todo not found',
+				details,
+			),
 	};
 
 	static conflict = {

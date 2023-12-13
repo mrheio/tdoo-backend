@@ -1,0 +1,30 @@
+@todos_url={{api_url}}/todos
+
+POST {{todos_url}}
+content-type: application/json
+
+{
+    "task": "task 6",
+    "user_id": "73deb29a-0ea3-49f7-ab4b-36363f138954"
+}
+###
+
+PUT {{todos_url}}/1
+content-type: application/json
+
+{
+    "email": "",
+    "username": "user2"
+}
+###
+
+DELETE {todos_url}}/4c4fc6ce-78d3-4983-a06b-6ff868944409
+###
+
+GET {{todos_url}}
+###
+
+GET {{todos_url}}?user_id=73deb29a-0ea3-49f7-ab4b-36363f138954
+
+GET {{todos_url}}/2
+###
