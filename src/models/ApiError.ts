@@ -31,6 +31,14 @@ export default class ApiError<T> extends Error {
 		return new ApiError<T>(HttpStatusCode.BAD_REQUEST, message, details);
 	}
 
+	static unauthorized<T>(details?: T) {
+		return new ApiError(
+			HttpStatusCode.UNAUTHORIZED,
+			'Unauthorized request',
+			details ?? null,
+		);
+	}
+
 	static notFound = {
 		user: <T>(details?: T) =>
 			new ApiError<T>(

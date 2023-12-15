@@ -1,47 +1,7 @@
-import { FastifyEnvOptions, fastifyEnv } from '@fastify/env';
-import fastify, { FastifyPluginCallback } from 'fastify';
-import errorHandler from './error';
-import authRouter from './routers/authRouter';
-import todoRouter from './routers/todoRouter';
-import userRouter from './routers/userRouter';
-import { zodValidatorCompiler } from './schemas/utils';
-
-const envOptions: FastifyEnvOptions = {
-	dotenv: true,
-	schema: {
-		type: 'object',
-		required: ['HOST', 'PORT'],
-		properties: {
-			HOST: { type: 'string' },
-			PORT: { type: 'number' },
-		},
-	},
-};
-
-const server = fastify({
-	logger: {
-		transport: {
-			target: '@fastify/one-line-logger',
-			options: {
-				colorize: true,
-			},
-		},
-	},
-});
-
-const apiHandler: FastifyPluginCallback = (fastify, _, done) => {
-	fastify.register(authRouter, { prefix: '/auth' });
-	fastify.register(userRouter, { prefix: '/users' });
-	fastify.register(todoRouter, { prefix: '/todos' });
-
-	done();
-};
+import { buildServer } from './setup';
 
 (async () => {
-	await server.register(fastifyEnv, envOptions);
-	server.setValidatorCompiler(zodValidatorCompiler);
-	server.register(apiHandler, { prefix: '/api' });
-	server.setErrorHandler(errorHandler);
+	const server = await buildServer();
 
 	server.listen(
 		{ host: process.env.HOST, port: process.env.PORT },

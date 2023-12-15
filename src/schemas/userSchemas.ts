@@ -11,6 +11,7 @@ const user = z.object({
 const createUser = z.object({
 	email: z.string().email(),
 	username: z.string().min(3),
+	password: z.string(),
 });
 
 const updateUser = z.object({

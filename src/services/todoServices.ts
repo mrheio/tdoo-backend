@@ -43,11 +43,13 @@ const getOneById = async (id: number | string) => {
 };
 
 const todoService = {
-	createTodo,
-	updateTodo,
-	deleteTodo,
-	getMany,
-	getOneById,
+	create: createTodo,
+	update: updateTodo,
+	delete: deleteTodo,
+	get: {
+		many: getMany,
+		one: getOneById,
+	},
 };
 
 export default todoService;

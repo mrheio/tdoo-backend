@@ -2,8 +2,9 @@ POST {{api_url}}/users
 content-type: application/json
 
 {
-    "email": "email4@test.com",
-    "username": "user4"
+    "email": "email@test.com",
+    "username": "username",
+    "password": "password"
 }
 ###
 
@@ -16,16 +17,18 @@ content-type: application/json
 }
 ###
 
-DELETE {{api_url}}/users/73deb29a-0ea3-49f7-ab4b-36363f138954
+DELETE {{api_url}}/users/1ce46826-558a-4378-a65e-35f7811e2c5e
 ###
 
 GET {{api_url}}/users
+Authorization: Bearer <token>
 ###
 
 GET {{api_url}}/users?order_dir=asc
 ###
 
 GET {{api_url}}/users
+Authorization: Bearer username:password
 ###
 
 GET {{api_url}}/users/53091e0d-c0c1-4c37-b103-28248e7a69cb

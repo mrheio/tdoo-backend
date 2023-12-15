@@ -57,11 +57,13 @@ const getOneById = async (id: string) => {
 };
 
 const userService = {
-	createUser,
-	updateUser,
-	deleteUser,
-	getMany,
-	getOneById,
+	create: createUser,
+	update: updateUser,
+	delete: deleteUser,
+	get: {
+		many: getMany,
+		one: getOneById,
+	},
 };
 
 export default userService;

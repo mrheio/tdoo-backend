@@ -24,7 +24,11 @@ const userRouter: FastifyPluginCallback = (fastify, opts, done) => {
 
 	fastify.delete('/:id', userController.deleteUser);
 
-	fastify.get('/', { schema: schemas.getMany }, userController.getUsers);
+	fastify.get(
+		'/',
+		{ schema: schemas.getMany, onRequest: [fastify.authorize] },
+		userController.getUsers,
+	);
 	fastify.get('/:id', userController.getUserById);
 
 	done();

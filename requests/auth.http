@@ -1,0 +1,24 @@
+@auth_url={{api_url}}/auth
+
+POST {{auth_url}}/signin
+content-type: application/json
+
+{
+    "username": "username",
+    "password": "password"
+}
+###
+
+POST {{auth_url}}/register
+content-type: application/json
+
+{
+    "email": "email@test.com",
+    "username": "username",
+    "password": "password"
+}
+###
+
+GET {{auth_url}}/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsQHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VybmFtZSIsImlhdCI6MTcwMjU1MjU2OCwiZXhwIjoxNzAyNTUyNTgzfQ.f4EW1purSxA5H_bnKzsE1F4Fy4HemGPberNtqGZdRqQ
+###

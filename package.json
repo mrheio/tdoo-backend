@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "glob -c \"node --env-file=.env.test --import tsx --no-warnings --test --watch\" \"./tests/**/*.test.ts\"",
 		"build": "tsc -p tsconfig.json",
 		"dev": "tsx watch --clear-screen=false src/index.ts",
 		"start": "node index.js",
@@ -16,14 +16,19 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@fastify/cookie": "^9.2.0",
 		"@fastify/env": "^4.3.0",
 		"@fastify/one-line-logger": "^1.2.0",
 		"@prisma/client": "^5.6.0",
+		"bcrypt": "^5.1.1",
+		"fast-jwt": "^3.3.2",
 		"fastify": "^4.24.3",
+		"glob": "^10.3.10",
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
 		"@tsconfig/node20": "^20.1.2",
+		"@types/bcrypt": "^5.0.2",
 		"@types/node": "^20.10.3",
 		"prisma": "^5.6.0",
 		"tsx": "^4.6.2",
