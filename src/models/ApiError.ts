@@ -93,10 +93,10 @@ export default class ApiError<T> extends Error {
 
 			if (error.code === 'P2002') {
 				if (resource === 'user') {
-					if (error.meta.target[0] === 'email') {
+					if ((error.meta?.target as any[0]) === 'email') {
 						return ApiError.conflict.user.email();
 					}
-					if (error.meta.target[0] === 'username') {
+					if ((error.meta?.target as any[0]) === 'username') {
 						return ApiError.conflict.user.username();
 					}
 				}
