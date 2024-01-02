@@ -19,7 +19,7 @@ model User {
 model Todo {
   id Int @id @default(autoincrement())
   task String
-  done Boolean @default(false)
+  completed Boolean @default(false)
   created_at DateTime @default(now())
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id String

@@ -4,21 +4,26 @@ POST {{auth_url}}/signin
 content-type: application/json
 
 {
-    "username": "username",
-    "password": "password"
+    "username": "username1",
+    "password": "password1"
 }
+###
+
+POST {{auth_url}}/signout
 ###
 
 POST {{auth_url}}/register
 content-type: application/json
 
 {
-    "email": "email@test.com",
-    "username": "username",
+    "email": "email1@test.com",
+    "username": "username1",
     "password": "password"
 }
 ###
 
 GET {{auth_url}}/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImVtYWlsQHRlc3QuY29tIiwidXNlcm5hbWUiOiJ1c2VybmFtZSIsImlhdCI6MTcwMjU1MjU2OCwiZXhwIjoxNzAyNTUyNTgzfQ.f4EW1purSxA5H_bnKzsE1F4Fy4HemGPberNtqGZdRqQ
+###
+
+POST {{auth_url}}/refresh
 ###

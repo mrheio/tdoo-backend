@@ -1,5 +1,5 @@
 import { FastifyReply } from 'fastify';
-import HttpStatusCode from '../http';
+import { HttpStatusCode } from '../utils';
 
 export default class ApiSuccess<T> {
 	type: 'success' = 'success';

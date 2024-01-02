@@ -1,7 +1,7 @@
 import { TokenError } from 'fast-jwt';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import ApiError from '../models/ApiError';
-import authService from '../services/authService';
+import JwtService from '../services/jwt.service';
 import { extractBearerToken } from '../utils';
 
 const authorizeRequest = async (req: FastifyRequest, reply: FastifyReply) => {
@@ -11,11 +11,11 @@ const authorizeRequest = async (req: FastifyRequest, reply: FastifyReply) => {
 
 	try {
 		const token = extractBearerToken(req.headers.authorization);
-		await authService.verifyJwt(token);
+		await JwtService.verifyJwt(token);
 	} catch (e) {
 		if (e instanceof TokenError) {
 			if (e.code === 'FAST_JWT_EXPIRED') {
-				throw ApiError.unauthorized('Token expired');
+				throw ApiError.unauthorized({ refresh: true });
 			}
 		}
 		throw e;

@@ -21,8 +21,12 @@ const updateTodo = async (id: number | string, payload: UpdateTodoData) => {
 };
 
 const deleteTodo = async (id: number | string) => {
-	const res = await prisma.todo.delete({ where: { id: Number(id) } });
-	return res;
+	try {
+		const res = await prisma.todo.delete({ where: { id: Number(id) } });
+		return res;
+	} catch (e) {
+		throw ApiError.maybeFromPrisma(e, 'todo');
+	}
 };
 
 const getMany = async (filters?: { user_id?: string }) => {
@@ -42,7 +46,7 @@ const getOneById = async (id: number | string) => {
 	return res;
 };
 
-const todoService = {
+const TodoService = {
 	create: createTodo,
 	update: updateTodo,
 	delete: deleteTodo,
@@ -52,4 +56,4 @@ const todoService = {
 	},
 };
 
-export default todoService;
+export default TodoService;

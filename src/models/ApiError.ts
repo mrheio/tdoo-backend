@@ -1,7 +1,7 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { FastifyReply } from 'fastify';
 import { ZodError } from 'zod';
-import HttpStatusCode from '../http';
+import { HttpStatusCode } from '../utils';
 
 export default class ApiError<T> extends Error {
 	type: 'error' = 'error';
@@ -37,6 +37,10 @@ export default class ApiError<T> extends Error {
 			'Unauthorized request',
 			details ?? null,
 		);
+	}
+
+	static invalidCredentials() {
+		return new ApiError(HttpStatusCode.UNAUTHORIZED, 'Invalid credentials');
 	}
 
 	static notFound = {
@@ -76,11 +80,14 @@ export default class ApiError<T> extends Error {
 			ApiError.badRequest('Invalid user data', zError.flatten()),
 	};
 
-	static maybeFromPrisma(error: unknown, resource: 'user' = 'user') {
+	static maybeFromPrisma(error: unknown, resource: 'user' | 'todo' = 'user') {
 		if (error instanceof PrismaClientKnownRequestError) {
 			if (error.code === 'P2025') {
 				if (resource === 'user') {
 					return ApiError.notFound.user();
+				}
+				if (resource === 'todo') {
+					return ApiError.notFound.todo();
 				}
 			}
 

@@ -18,13 +18,14 @@ content-type: application/json
 }
 ###
 
-DELETE {todos_url}}/4c4fc6ce-78d3-4983-a06b-6ff868944409
+DELETE {{todos_url}}/21
 ###
 
 GET {{todos_url}}
 ###
 
 GET {{todos_url}}?user_id=73deb29a-0ea3-49f7-ab4b-36363f138954
+###
 
 GET {{todos_url}}/2
 ###

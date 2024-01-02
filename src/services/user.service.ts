@@ -56,7 +56,7 @@ const getOneById = async (id: string) => {
 	return data;
 };
 
-const userService = {
+const UserService = {
 	create: createUser,
 	update: updateUser,
 	delete: deleteUser,
@@ -66,4 +66,4 @@ const userService = {
 	},
 };
 
-export default userService;
+export default UserService;

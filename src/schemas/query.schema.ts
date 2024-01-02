@@ -1,10 +1,12 @@
 import z from 'zod';
 
+const orderDirSchema = z.enum(['asc', 'desc']);
+
 const getUsersQuery = z.object({
 	email: z.string().optional(),
 	username: z.string().optional(),
 	order_by: z.string().optional(),
-	order_dir: z.enum(['asc', 'desc']).optional(),
+	order_dir: orderDirSchema.optional(),
 });
 
 const getTodosQuery = z.object({
@@ -16,15 +18,19 @@ const getUsersFilters = z.object({
 	username: z.string().optional(),
 	orderBy: z
 		.object({
-			created_at: z.enum(['asc', 'desc']).optional(),
+			created_at: orderDirSchema.optional(),
 		})
 		.optional(),
 });
 
-const querySchemas = {
-	getUsersQuery,
-	getTodosQuery,
-	getUsersFilters,
+const QuerySchema = {
+	request: {
+		getUsers: getUsersQuery,
+		getTodos: getTodosQuery,
+	},
+	filters: {
+		getUsers: getUsersFilters,
+	},
 };
 
-export default querySchemas;
+export default QuerySchema;
