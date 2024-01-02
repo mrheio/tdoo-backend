@@ -1,6 +1,6 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { FastifyReply } from 'fastify';
-import { ZodError } from 'zod';
+import { ZodError, typeToFlattenedError } from 'zod';
 import { HttpStatusCode } from '../utils';
 
 export default class ApiError<T> extends Error {
@@ -8,7 +8,7 @@ export default class ApiError<T> extends Error {
 	statusCode: number = 400;
 	details?: T;
 
-	private constructor(statusCode: number, message: string, details?: T) {
+	constructor(statusCode: number, message: string, details?: T) {
 		super(message);
 		this.statusCode = statusCode;
 		this.details = details;
@@ -44,40 +44,19 @@ export default class ApiError<T> extends Error {
 	}
 
 	static notFound = {
-		user: <T>(details?: T) =>
-			new ApiError<T>(
-				HttpStatusCode.NOT_FOUND,
-				'User not found',
-				details,
-			),
-		todo: <T>(details?: T) =>
-			new ApiError<T>(
-				HttpStatusCode.NOT_FOUND,
-				'Todo not found',
-				details,
-			),
+		user: <T>(details?: T) => NotFoundError.user(details),
+		todo: <T>(details?: T) => NotFoundError.todo(details),
 	};
 
 	static conflict = {
 		user: {
-			email: <T>(details?: T) =>
-				new ApiError<T>(
-					HttpStatusCode.CONFLICT,
-					'Email already taken',
-					details,
-				),
-			username: <T>(details?: T) =>
-				new ApiError<T>(
-					HttpStatusCode.CONFLICT,
-					'Username already taken',
-					details,
-				),
+			email: <T>(details?: T) => ConflictError.user.email(details),
+			username: <T>(details?: T) => ConflictError.user.username(details),
 		},
 	};
 
 	static validation = {
-		user: <T>(zError: ZodError<T>) =>
-			ApiError.badRequest('Invalid user data', zError.flatten()),
+		user: <T>(zError: ZodError<T>) => ValidationError.user(zError),
 	};
 
 	static maybeFromPrisma(error: unknown, resource: 'user' | 'todo' = 'user') {
@@ -107,4 +86,41 @@ export default class ApiError<T> extends Error {
 
 		return error;
 	}
+}
+
+class ValidationError<T> extends ApiError<typeToFlattenedError<T>> {
+	constructor(message: string, error: ZodError<T>) {
+		super(HttpStatusCode.BAD_REQUEST, message, error.flatten());
+	}
+
+	static user<T>(error: ZodError<T>) {
+		return new ValidationError('Invalid user data', error);
+	}
+}
+
+class NotFoundError<T> extends ApiError<T> {
+	constructor(message: string, details?: T) {
+		super(HttpStatusCode.NOT_FOUND, message, details);
+	}
+
+	static user<T>(details?: T) {
+		return new NotFoundError('User not found', details);
+	}
+
+	static todo<T>(details?: T) {
+		return new NotFoundError('Todo not found', details);
+	}
+}
+
+class ConflictError<T> extends ApiError<T> {
+	constructor(message: string, details?: T) {
+		super(HttpStatusCode.CONFLICT, message, details);
+	}
+
+	static user = {
+		email: <T>(details?: T) =>
+			new ConflictError('Email already taken', details),
+		username: <T>(details?: T) =>
+			new ConflictError('Username already taken', details),
+	};
 }
