@@ -2,13 +2,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import ApiError from '../models/ApiError';
 import ApiSuccess from '../models/ApiSuccess';
 import AuthService from '../services/auth.service';
-import { RegisterData, SigninData } from '../types';
+import { RegisterRequest, SignInRequest } from '../types';
 import { Cookie } from '../utils';
 
-const signin = async (
-	req: FastifyRequest<{ Body: SigninData }>,
-	reply: FastifyReply,
-) => {
+const signin = async (req: SignInRequest, reply: FastifyReply) => {
 	const data = await AuthService.signin(req.body);
 	Cookie.accessToken.set(data.accessToken, reply);
 	Cookie.refreshToken.set(data.refreshToken, reply);
@@ -21,10 +18,7 @@ const signout = (req: FastifyRequest, reply: FastifyReply) => {
 	return ApiSuccess.ok(null).send(reply);
 };
 
-const register = async (
-	req: FastifyRequest<{ Body: RegisterData }>,
-	reply: FastifyReply,
-) => {
+const register = async (req: RegisterRequest, reply: FastifyReply) => {
 	const data = await AuthService.register(req.body);
 	Cookie.accessToken.set(data.accessToken, reply);
 	Cookie.refreshToken.set(data.refreshToken, reply);

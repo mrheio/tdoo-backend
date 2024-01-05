@@ -28,8 +28,6 @@ const deleteUser = async (id: string) => {
 		const res = await prisma.user.delete({ where: { id } });
 		return res;
 	} catch (err) {
-		console.log(err);
-
 		throw ApiError.maybeFromPrisma(err);
 	}
 };

@@ -1,6 +1,6 @@
 import prisma from '../db';
 import ApiError from '../models/ApiError';
-import { CreateTodoData, UpdateTodoData } from '../types';
+import { CreateTodoData, GetTodosFilters, UpdateTodoData } from '../types';
 
 const createTodo = async (payload: CreateTodoData) => {
 	const { user_id, ...rest } = payload;
@@ -29,9 +29,10 @@ const deleteTodo = async (id: number | string) => {
 	}
 };
 
-const getMany = async (filters?: { user_id?: string }) => {
+const getMany = async (filters?: GetTodosFilters) => {
 	const res = await prisma.todo.findMany({
 		where: { user_id: filters?.user_id },
+		orderBy: filters?.orderBy,
 	});
 	return res;
 };

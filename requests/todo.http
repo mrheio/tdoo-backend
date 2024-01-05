@@ -24,7 +24,7 @@ DELETE {{todos_url}}/21
 GET {{todos_url}}
 ###
 
-GET {{todos_url}}?user_id=73deb29a-0ea3-49f7-ab4b-36363f138954
+GET {{todos_url}}?user_id=3acd96e5-a8ac-4982-81d6-ca16ceaa4d63&order_by=completed&order_dir=desc&order_by=created_at
 ###
 
 GET {{todos_url}}/2

@@ -1,5 +1,6 @@
 import { FastifyPluginCallback } from 'fastify';
 import TodoController from '../controllers/todo.controller';
+import QuerySchema from '../schemas/query.schema';
 import TodoSchema from '../schemas/todo.schema';
 
 const todoRouter: FastifyPluginCallback = (fastify, opts, done) => {
@@ -14,7 +15,11 @@ const todoRouter: FastifyPluginCallback = (fastify, opts, done) => {
 		TodoController.update,
 	);
 	fastify.delete('/:id', {}, TodoController.delete);
-	fastify.get('/', {}, TodoController.getMany);
+	fastify.get(
+		'/',
+		{ schema: { querystring: QuerySchema.request.getTodos } },
+		TodoController.getMany,
+	);
 	fastify.get('/:id', {}, TodoController.getOne);
 
 	done();

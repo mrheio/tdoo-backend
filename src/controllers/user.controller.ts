@@ -1,55 +1,44 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyReply } from 'fastify';
 import ApiSuccess from '../models/ApiSuccess';
 import UserService from '../services/user.service';
 import {
-	CreateUserData,
-	GetUsersFilters,
-	GetUsersQueryParams,
-	UpdateUserData,
+	CreateUserRequest,
+	DeleteUserRequest,
+	GetUserByIdRequest,
+	GetUsersRequest,
+	UpdateUserRequest,
 } from '../types';
 
-const createUser = async (
-	req: FastifyRequest<{ Body: CreateUserData }>,
-	reply: FastifyReply,
-) => {
+const createUser = async (req: CreateUserRequest, reply: FastifyReply) => {
 	const data = await UserService.create(req.body);
 	return ApiSuccess.created(data).send(reply);
 };
 
-const updateUser = async (
-	req: FastifyRequest<{ Params: { id: string }; Body: UpdateUserData }>,
-	reply: FastifyReply,
-) => {
+const updateUser = async (req: UpdateUserRequest, reply: FastifyReply) => {
 	const data = await UserService.update(req.params.id, req.body);
 	return ApiSuccess.ok(data).send(reply);
 };
 
-const deleteUser = async (
-	req: FastifyRequest<{ Params: { id: string } }>,
-	reply: FastifyReply,
-) => {
+const deleteUser = async (req: DeleteUserRequest, reply: FastifyReply) => {
 	await UserService.delete(req.params.id);
 	return ApiSuccess.noContent().send(reply);
 };
 
-const getUsers = async (
-	req: FastifyRequest<{ Querystring: GetUsersQueryParams }>,
-	reply: FastifyReply,
-) => {
-	const { order_by, order_dir, ...rest } = req.query;
-	const filters: GetUsersFilters = {
-		...rest,
-		...(order_by && { orderBy: { [order_by]: order_dir } }),
+const getUsers = async (req: GetUsersRequest, reply: FastifyReply) => {
+	const { query } = req;
+	const filters = {
+		...(query.email && { email: query.email }),
+		...(query.username && { username: query.username }),
+		...(query.order_by && {
+			orderBy: { [query.order_by]: query.order_dir ?? 'asc' },
+		}),
 	};
 
 	const data = await UserService.get.many(filters);
 	return ApiSuccess.ok(data).send(reply);
 };
 
-const getUserById = async (
-	req: FastifyRequest<{ Params: { id: string } }>,
-	reply: FastifyReply,
-) => {
+const getUserById = async (req: GetUserByIdRequest, reply: FastifyReply) => {
 	const data = await UserService.get.one(req.params.id);
 	return ApiSuccess.ok(data).send(reply);
 };
