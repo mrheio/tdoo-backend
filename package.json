@@ -7,7 +7,7 @@
 		"test": "glob -c \"node --env-file=.env.test --import tsx --no-warnings --test --watch\" \"./tests/**/*.test.ts\"",
 		"build": "tsc -p tsconfig.json",
 		"dev": "tsx watch --clear-screen=false src/index.ts",
-		"start": "node index.js",
+		"start": "node dist/index.js",
 		"db:pull": "prisma db pull",
 		"db:generate": "prisma generate",
 		"db:migrate": "prisma migrate dev",

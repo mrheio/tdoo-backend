@@ -23,9 +23,7 @@ const opts = {
 		dotenv: true,
 		schema: {
 			type: 'object',
-			required: ['HOST', 'PORT'],
 			properties: {
-				HOST: { type: 'string' },
 				PORT: { type: 'number' },
 			},
 		},
