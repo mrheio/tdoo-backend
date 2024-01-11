@@ -42,4 +42,7 @@ jobs:
               run: ssh deploy 'cd ${{ env.TARGET_DIR }} && npm run build'
 
             - name: (re)Start app
-              run: ssh deploy 'export DATABASE_URL=${{ secrets.DATABASE_URL }} && export DATABASE_URL=${{ secrets.JWT_SECRET }} && cd ${{ env.TARGET_DIR }} && pm2 start dist/index.js --watch --name tdoo-backend'
+              env:
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+              run: ssh deploy 'cd ${{ env.TARGET_DIR }} && DATABASE_URL=$DATABASE_URL JWT_SECRET=$JWT_SECRET pm2 start dist/index.js --watch --name tdoo-backend'
