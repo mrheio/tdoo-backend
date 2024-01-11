@@ -32,7 +32,7 @@ jobs:
                   SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
             - name: Pull/Clone repository
-              run: ssh deploy 'git -C "$TARGET_DIR" pull || git clone "$REPO_URL" "$TARGET_DIR"'
+              run: ssh deploy 'cd ~ && git -C "$TARGET_DIR" pull || git clone "$REPO_URL" "$TARGET_DIR"'
 
             - name: Install packages
               run: ssh deploy 'cd "$TARGET_DIR" && npm i'
