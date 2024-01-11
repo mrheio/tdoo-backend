@@ -41,7 +41,10 @@ const getMany = async (filters?: GetUsersFilters) => {
 		},
 	});
 
-	return data;
+	return data.map((user) => {
+		const { password, ...rest } = user;
+		return rest;
+	});
 };
 
 const getOneById = async (id: string) => {
@@ -51,7 +54,8 @@ const getOneById = async (id: string) => {
 		throw ApiError.notFound.user({ id });
 	}
 
-	return data;
+	const { password, ...rest } = data;
+	return rest;
 };
 
 const UserService = {
