@@ -42,14 +42,11 @@ jobs:
               run: ssh deploy 'cd ${{ env.TARGET_DIR }} && npm run build'
 
             - name: Copy env variables
-              env:
-                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-              run: ssh deploy '\
-                  cd ${{ env.TARGET_DIR }} &&\
-                  rm -rf .env &&\
-                  echo $DATABASE_URL >> .env &&\
-                  echo $JWT_SECRET >> .env'
+              run: ssh deploy 'cd ${{ env.TARGET_DIR }} &&
+                  rm -rf .env &&
+                  echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env &&
+                  echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env'
 
             - name: (re)Start app
-              run: ssh deploy 'cd ${{ env.TARGET_DIR }} && pm2 restart dist/index.js --name tdoo-backend'
+              run: ssh deploy 'cd ${{ env.TARGET_DIR }} &&
+                  pm2 restart dist/index.js --name tdoo-backend --update-env'
