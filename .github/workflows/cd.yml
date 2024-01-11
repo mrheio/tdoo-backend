@@ -32,12 +32,11 @@ jobs:
                     StrictHostKeyChecking no
                   END
 
-            - name: Pull/Clone repository
-              run: ssh deploy 'cd ~ && \
-                  git -C "$TARGET_DIR" pull || git clone "$REPO_URL" "$TARGET_DIR"'
+            - name: Pull/Clone app repo
+              run: ssh deploy 'cd ~ && git -C ${{ env.TARGET_DIR }} pull || git clone ${{ env.REPO_URL }} ${{ env.TARGET_DIR }}'
 
             - name: Move to app
-              run: ssh deploy 'cd "$TARGET_DIR"'
+              run: ssh deploy 'cd ${{ env.TARGET_DIR }}'
 
             - name: Install packages
               run: ssh deploy 'npm i'
