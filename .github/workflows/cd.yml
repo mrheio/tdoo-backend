@@ -1,0 +1,44 @@
+name: Deploy
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    deploy:
+        name: 'Deploy'
+        runs-on: ubuntu-latest
+        env:
+            TARGET_DIR: tdoo-backend
+            REPO_URL: git@github.com-tdoo-backend:mrheio/tdoo-backend.git
+
+        steps:
+            - name: Configure SSH
+              run: |
+                  mkdir -p ~/.ssh/
+                  echo "$SSH_KEY" > ~/.ssh/deploy.key
+                  chmod 600 ~/.ssh/deploy.key
+                  cat >>~/.ssh/config <<END
+                  Host deploy
+                    HostName $SSH_HOST
+                    User $SSH_USER
+                    IdentityFile ~/.ssh/deploy.key
+                    StrictHostKeyChecking no
+                  END
+              env:
+                  SSH_HOST: ${{ secrets.SSH_HOST }}
+                  SSH_USER: ${{ secrets.SSH_USER }}
+                  SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+            - name: Pull/Clone repository
+              run: ssh deploy 'git -C "$TARGET_DIR" pull || git clone "$REPO_URL" "$TARGET_DIR"'
+
+            - name: Install packages
+              run: ssh deploy 'cd "$TARGET_DIR" && npm i'
+
+            - name: Build app
+              run: ssh deploy 'npm run build'
+
+            - name: (re)Start app
+              run: ssh deploy 'pm2 stop tdoo-backend && pm2 start dist/index.js --name tdoo-backend'
