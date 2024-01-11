@@ -10,32 +10,36 @@ jobs:
         name: 'Deploy'
         runs-on: ubuntu-latest
         env:
-            TARGET_DIR: tdoo-backend
+            TARGET_DIR: ~/tdoo-backend
             REPO_URL: git@github.com-tdoo-backend:mrheio/tdoo-backend.git
 
         steps:
             - name: Configure SSH
+              env:
+                  SSH_HOST: ${{ secrets.SSH_HOST }}
+                  SSH_USER: ${{ secrets.SSH_USERNAME }}
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
               run: |
                   mkdir -p ~/.ssh/
-                  echo "$SSH_KEY" > ~/.ssh/deploy.key
-                  chmod 600 ~/.ssh/deploy.key
+                  echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy
+                  chmod 600 ~/.ssh/deploy
                   cat >>~/.ssh/config <<END
                   Host deploy
                     HostName $SSH_HOST
                     User $SSH_USER
-                    IdentityFile ~/.ssh/deploy.key
+                    IdentityFile ~/.ssh/deploy
                     StrictHostKeyChecking no
                   END
-              env:
-                  SSH_HOST: ${{ secrets.SSH_HOST }}
-                  SSH_USER: ${{ secrets.SSH_USERNAME }}
-                  SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
             - name: Pull/Clone repository
-              run: ssh deploy 'cd ~ && git -C "$TARGET_DIR" pull || git clone "$REPO_URL" "$TARGET_DIR"'
+              run: ssh deploy 'cd ~ && \
+                  git -C "$TARGET_DIR" pull || git clone "$REPO_URL" "$TARGET_DIR"'
+
+            - name: Move to app
+              run: ssh deploy 'cd "$TARGET_DIR"'
 
             - name: Install packages
-              run: ssh deploy 'cd "$TARGET_DIR" && npm i'
+              run: ssh deploy 'npm i'
 
             - name: Build app
               run: ssh deploy 'npm run build'
