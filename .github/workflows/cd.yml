@@ -60,4 +60,4 @@ jobs:
               run: ssh deploy 'docker rm --force tdoo-backend && docker run -d -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e JWT_SECRET="${{ secrets.JWT_SECRET }}" -p 8080:8080 --name=tdoo-backend tdoo-backend:lts'
 
             - name: Cleanup
-              run: ssh deploy 'docker image prune -a'
+              run: ssh deploy 'docker image prune -a --force'
