@@ -6,6 +6,9 @@ on:
             - main
     workflow_dispatch:
 
+env:
+    APP: tdoo-backend
+
 jobs:
     build:
         name: Build image
@@ -15,16 +18,16 @@ jobs:
               uses: actions/checkout@v4
 
             - name: Build Docker image
-              run: docker build . --tag tdoo-backend:lts
+              run: docker build . --tag ${{ env.APP }}:lts
 
             - name: Save image
-              run: docker save tdoo-backend > /tmp/tdoo-backend.tar
+              run: docker save ${{ env.APP }} > /tmp/${{ env.APP }}.tar
 
             - name: Upload image
               uses: actions/upload-artifact@v4
               with:
-                  name: tdoo-backend
-                  path: /tmp/tdoo-backend.tar
+                  name: ${{ env.APP }}
+                  path: /tmp/${{ env.APP }}.tar
 
     deploy:
         name: Deploy server
@@ -47,17 +50,17 @@ jobs:
             - name: Download image
               uses: actions/download-artifact@v4
               with:
-                  name: tdoo-backend
+                  name: ${{ env.APP }}
                   path: /tmp
 
             - name: Upload image to server
-              run: rsync -avz /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
+              run: rsync -avz /tmp/${{ env.APP }}.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
 
             - name: Load image
-              run: ssh deploy 'cd ~/app && docker load < tdoo-backend.tar'
+              run: ssh deploy 'cd ~/app && docker load < ${{ env.APP }}.tar'
 
             - name: Run app
-              run: ssh deploy 'docker rm --force tdoo-backend && docker run -d -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e JWT_SECRET="${{ secrets.JWT_SECRET }}" -p 8080:8080 --name=tdoo-backend tdoo-backend:lts'
+              run: ssh deploy 'docker rm --force ${{ env.APP }} && docker run -d -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e JWT_SECRET="${{ secrets.JWT_SECRET }}" -p 8080:8080 --name=${{ env.APP }} ${{ env.APP }}:lts'
 
             - name: Cleanup
               run: ssh deploy 'docker image prune -a --force'
