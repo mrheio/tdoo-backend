@@ -54,4 +54,4 @@ jobs:
                   path: /tmp
 
             - name: Upload image to server
-              run: scp /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app
+              run: scp -vvv /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app
