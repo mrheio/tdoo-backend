@@ -54,4 +54,10 @@ jobs:
                   path: /tmp
 
             - name: Upload image to server
-              run: scp -v /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app
+              run: scp -v /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/tdoo-backend.tar
+
+            - name: Load image
+              run: ssh deploy 'cd ~/app && docker load < tdoo-backend.tar'
+
+            - name: List images
+              run: ssh deploy 'docker images'
