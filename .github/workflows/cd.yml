@@ -14,14 +14,11 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
+            - name: Build Docker image
+              run: docker build . --tag tdoo-backend:lts
 
-            - name: Build and export
-              uses: docker/build-push-action@v5
-              with:
-                  context: .
-                  outputs: type=docker,dest=/tmp/tdoo-backend.tar
+            - name: Save image
+              run: docker save tdoo-backend > /tmp/tdoo-backend.tar
 
             - name: Upload image
               uses: actions/upload-artifact@v4
@@ -54,10 +51,13 @@ jobs:
                   path: /tmp
 
             - name: Upload image to server
-              run: rsync -avz /tmp/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
+              run: rsync -avz /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
 
             - name: Load image
               run: ssh deploy 'cd ~/app && docker load < tdoo-backend.tar'
 
-            - name: List images
-              run: ssh deploy 'docker images'
+            - name: Run app
+              run: ssh deploy 'docker rm --force tdoo-backend && docker run -d -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e JWT_SECRET="${{ secrets.JWT_SECRET }}" -p 8080:8080 --name=tdoo-backend tdoo-backend:lts'
+
+            - name: Cleanup
+              run: ssh deploy 'docker image prune -a'
