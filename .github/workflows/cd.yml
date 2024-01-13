@@ -7,46 +7,51 @@ on:
     workflow_dispatch:
 
 jobs:
-    deploy:
-        name: 'Deploy'
-        runs-on: ubuntu-latest
-        env:
-            TARGET_DIR: ~/tdoo-backend
-            REPO_URL: git@github.com-tdoo-backend:mrheio/tdoo-backend.git
-
+    build:
+        name: Build image
+        runs-on: ubuntu-22.04
         steps:
-            - name: Configure SSH
-              env:
-                  SSH_HOST: ${{ secrets.SSH_HOST }}
-                  SSH_USER: ${{ secrets.SSH_USERNAME }}
-                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Build and export
+              uses: docker/build-push-action@v5
+              with:
+                  context: .
+                  outputs: type=docker,dest=/tmp/tdoo-backend.tar
+
+            - name: Upload image
+              uses: actions/upload-artifact@v4
+              with:
+                  name: tdoo-backend
+                  path: /tmp/tdoo-backend.tar
+
+    deploy:
+        name: Deploy server
+        runs-on: ubuntu-22.04
+        needs: build
+        steps:
+            - name: Setup SSH
               run: |
                   mkdir -p ~/.ssh/
-                  echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy
-                  chmod 600 ~/.ssh/deploy
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+                  chmod 600 ~/.ssh/id_ed25519
+                  ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
                   cat >>~/.ssh/config <<END
                   Host deploy
-                    HostName $SSH_HOST
-                    User $SSH_USER
-                    IdentityFile ~/.ssh/deploy
-                    StrictHostKeyChecking no
+                    HostName ${{ secrets.SSH_HOST }}
+                    User ${{ secrets.SSH_USER }}
+                    IdentityFile ~/.ssh/id_ed25519
                   END
 
-            - name: Pull/Clone app repo
-              run: ssh deploy 'cd ~ && git -C ${{ env.TARGET_DIR }} pull || git clone ${{ env.REPO_URL }} ${{ env.TARGET_DIR }}'
+            - name: Download image
+              uses: actions/download-artifact@v4
+              with:
+                  name: tdoo-backend
+                  path: /tmp
 
-            - name: Install packages
-              run: ssh deploy 'cd ${{ env.TARGET_DIR }} && npm i'
-
-            - name: Build app
-              run: ssh deploy 'cd ${{ env.TARGET_DIR }} && npm run build'
-
-            - name: Copy env variables
-              run: ssh deploy 'cd ${{ env.TARGET_DIR }} &&
-                  rm -rf .env &&
-                  echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env &&
-                  echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env'
-
-            - name: (re)Start app
-              run: ssh deploy 'cd ${{ env.TARGET_DIR }} &&
-                  pm2 restart dist/index.js --name tdoo-backend --update-env'
+            - name: Upload image to server
+              run: scp /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app

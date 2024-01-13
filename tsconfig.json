@@ -2,7 +2,8 @@
 	"extends": "@tsconfig/node20/tsconfig.json",
 	"compilerOptions": {
 		"outDir": "dist",
-		"sourceMap": true
+		"sourceMap": true,
+		"noImplicitAny": false
 	},
 	"include": ["src/**/*.ts", "global.d.ts"],
 	"exclude": ["node_modules"]

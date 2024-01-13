@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+    backend:
+        build: .
+        image: tdoo-backend:lts
+        container_name: tdoo-backend
+        command: npm start
+        ports:
+            - 8080:8080
+        volumes:
+            - .:/app
+            - /app/node_modules
+        environment:
+            - DATABASE_URL=${DATABASE_URL}
+            - JWT_SECRET=${JWT_SECRET}
