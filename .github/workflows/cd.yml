@@ -47,14 +47,11 @@ jobs:
                     IdentityFile ~/.ssh/id_ed25519
                   END
 
-            - name: Test SSH
-              run: ssh -T deploy
+            - name: Download image
+              uses: actions/download-artifact@v4
+              with:
+                  name: tdoo-backend
+                  path: /tmp
 
-            # - name: Download image
-            #   uses: actions/download-artifact@v4
-            #   with:
-            #       name: tdoo-backend
-            #       path: /tmp
-
-            # - name: Upload image to server
-            #   run: scp -vvv /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app
+            - name: Upload image to server
+              run: scp -v /tmp/tdoo-backend.tar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app
