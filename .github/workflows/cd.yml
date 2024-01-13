@@ -54,7 +54,7 @@ jobs:
                   path: /tmp
 
             - name: Upload image to server
-              run: scp -v -r /tmp ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
+              run: rsync -avz /tmp/ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/app/
 
             - name: Load image
               run: ssh deploy 'cd ~/app && docker load < tdoo-backend.tar'
