@@ -1,19 +1,26 @@
-FROM node:20.11
-
-ENV HOST=0.0.0.0
-ENV PORT=8080
-
-EXPOSE ${PORT}
+FROM node:20.11-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json /app/package.json
-COPY package-lock.json /app/package-lock.json
+COPY package*.json ./
 RUN npm ci
 
-COPY . /app
+COPY . .
 
-RUN npm run db:generate
 RUN npm run build
+RUN npm run db:generate
+
+
+FROM node:20.11-alpine AS server
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --production
+
+COPY --from=builder ./app/dist ./dist
+COPY --from=builder ./app/node_modules/.prisma/client  ./node_modules/.prisma/client
+
+EXPOSE 8080
 
 CMD ["npm", "start"]
