@@ -60,7 +60,12 @@ jobs:
               run: ssh deploy 'cd ~/app && docker load < ${{ env.APP }}.tar'
 
             - name: Run app
-              run: ssh deploy 'docker rm --force ${{ env.APP }} && docker run -d -e DATABASE_URL="${{ secrets.DATABASE_URL }}" -e JWT_SECRET="${{ secrets.JWT_SECRET }}" -p 8080:8080 --name=${{ env.APP }} ${{ env.APP }}:lts'
+              run: ssh deploy 'docker rm --force ${{ env.APP }} && \
+                  docker run -d
+                  -e DATABASE_URL="${{ secrets.DATABASE_URL }}"
+                  -e JWT_SECRET="${{ secrets.JWT_SECRET }}"
+                  -p 8080:8080
+                  --name=${{ env.APP }} ${{ env.APP }}:lts'
 
             - name: Cleanup
               run: ssh deploy 'docker image prune -a --force'
